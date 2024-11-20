@@ -5,7 +5,6 @@
 #include <windows.h>
 
 
-
 struct Snake {
     //two dynamic arrays for x and y coordinates, from the head to the tail
     int* x;
@@ -22,8 +21,6 @@ struct Apple {
 typedef struct Apple Apple;
 
 
-
-
 boolean isSnakeBodyThere(Snake* snake, int x, int y) {
     //iterate through all coordinates of snake body
     for (int i = 0; i < snake->length; i++) {
@@ -33,13 +30,6 @@ boolean isSnakeBodyThere(Snake* snake, int x, int y) {
     }
     return 0;
 }
-
-
-
-
-
-
-
 
 void render(Snake* snake, Apple apple) {
     // create frame and assign x and y to each field    for now 10x10
@@ -72,9 +62,6 @@ void endGame(Snake* snake) {
     free(snake);
     exit(0);
 }
-
-
-
 
 void moveSnake(Snake* snake, char direction) {
     int* headX = &(snake->x[0]);
@@ -142,11 +129,7 @@ void moveSnake(Snake* snake, char direction) {
         endGame(snake);
     }
 
-    
-
 }
-
-
 
 void growSnake(Snake* snake) {
     snake->x = realloc(snake->x, sizeof(int) * ((size_t)snake->length + 1));
@@ -157,13 +140,10 @@ void growSnake(Snake* snake) {
     snake->length++;
 }
 
-
-
-
 int main() {
     srand((unsigned int)time(NULL)); 
     DWORD timeout = 1000;
-    // prompt user to choose difficulty level
+
     printf("Choose difficulty level (1-3): ");
     int difficulty;
     scanf("%d", &difficulty);
@@ -186,10 +166,10 @@ int main() {
     Apple apple = {appleX, appleY};
 
     render(snake, apple);
-    char input = 'd';  // Initial direction
+    char input = 'd';  // init direction
     growSnake(snake);
     render(snake, apple);
-    Sleep(timeout);  // Initial delay before starting the game
+    Sleep(timeout);
     while (1) {
         if (snake->length == 100) {
             printf("Congratulations! You reached the maximum length of 100.\n");
@@ -211,7 +191,7 @@ int main() {
         }
 
         render(snake, apple);
-        Sleep(timeout);  // Slow down the game for better visibility
+        Sleep(timeout);
     }
 
     free(snake->x);
@@ -219,6 +199,3 @@ int main() {
     free(snake);
     return 0;
 }
-
-
-
