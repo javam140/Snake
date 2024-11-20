@@ -60,6 +60,7 @@ void endGame(Snake* snake) {
     free(snake->x);
     free(snake->y);
     free(snake);
+    getch();
     exit(0);
 }
 
