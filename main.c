@@ -77,16 +77,73 @@ void endGame(Snake* snake) {
 
 
 void moveSnake(Snake* snake, char direction) {
-    int headX = snake->x[0];
-    int headY = snake->y[0];
-    if (direction == 'w' && snake->y[0] <= 10) {
-        if (isSnakeBodyThere(snake, headX, headY - 1))  {
+    int* headX = &(snake->x[0]);
+    int* headY = &(snake->y[0]);
+    if (direction == 'w' && *headY > 0) {
+        if (isSnakeBodyThere(snake, *headX, *headY - 1)) {
             endGame(snake);
         }
         else {
-            //todo move the snake correctly
+            // Move the snake up
+            (*headY)--;
+            // Shift the rest of the body
+            for (int i = snake->length - 1; i > 0; i--) {
+                snake->x[i] = snake->x[i-1];
+                snake->y[i] = snake->y[i-1];
+            }
         }
     }
+
+    if (direction == 'a' && *headX > 0) {
+        if (isSnakeBodyThere(snake, *headX - 1, *headY)) {
+            endGame(snake);
+        }
+        else {
+            // Move the snake left
+            (*headX)--;
+            // Shift the rest of the body
+            for (int i = snake->length - 1; i > 0; i--) {
+                snake->x[i] = snake->x[i-1];
+                snake->y[i] = snake->y[i-1];
+            }
+        }
+    }
+
+    if (direction == 's' && *headY < 9) {
+        if (isSnakeBodyThere(snake, *headX, *headY + 1)) {
+            endGame(snake);
+        }
+        else {
+            // Move the snake down
+            (*headY)++;
+            // Shift the rest of the body
+            for (int i = snake->length - 1; i > 0; i--) {
+                snake->x[i] = snake->x[i-1];
+                snake->y[i] = snake->y[i-1];
+            }
+        }
+    }
+
+    if (direction == 'd' && *headX < 9) {
+        if (isSnakeBodyThere(snake, *headX + 1, *headY)) {
+            endGame(snake);
+        }
+        else {
+            // Move the snake right
+            (*headX)++;
+            // Shift the rest of the body
+            for (int i = snake->length - 1; i > 0; i--) {
+                snake->x[i] = snake->x[i-1];
+                snake->y[i] = snake->y[i-1];
+            }
+        }
+    }
+    else {
+        endGame(snake);
+    }
+
+    
+
 }
 
 
