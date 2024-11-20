@@ -42,7 +42,7 @@ boolean isSnakeBodyThere(Snake* snake, int x, int y) {
 
 
 void render(Snake* snake, Apple apple) {
-    // we must create frame and assign x and y to each field    for now 10x10
+    // create frame and assign x and y to each field    for now 10x10
     //clear console
     system("cls");
     for (int i = 0; i < 10; i++) {
@@ -94,7 +94,7 @@ void moveSnake(Snake* snake, char direction) {
         }
     }
 
-    if (direction == 'a' && *headX > 0) {
+    else if (direction == 'a' && *headX > 0) {
         if (isSnakeBodyThere(snake, *headX - 1, *headY)) {
             endGame(snake);
         }
@@ -109,7 +109,7 @@ void moveSnake(Snake* snake, char direction) {
         }
     }
 
-    if (direction == 's' && *headY < 9) {
+    else if (direction == 's' && *headY < 9) {
         if (isSnakeBodyThere(snake, *headX, *headY + 1)) {
             endGame(snake);
         }
@@ -124,7 +124,7 @@ void moveSnake(Snake* snake, char direction) {
         }
     }
 
-    if (direction == 'd' && *headX < 9) {
+    else if (direction == 'd' && *headX < 9) {
         if (isSnakeBodyThere(snake, *headX + 1, *headY)) {
             endGame(snake);
         }
@@ -148,10 +148,27 @@ void moveSnake(Snake* snake, char direction) {
 
 
 
+void growSnake(Snake* snake) {
+    snake->x = realloc(snake->x, sizeof(int) * ((size_t)snake->length + 1));
+    snake->y = realloc(snake->y, sizeof(int) * ((size_t)snake->length + 1));
+
+    snake->x[snake->length] = snake->x[snake->length - 1];
+    snake->y[snake->length] = snake->y[snake->length - 1];
+    snake->length++;
+}
+
+
+
 
 int main() {
-    //printf("this is square %c\n",254);
-    //two random ints x and y
+    srand((unsigned int)time(NULL)); 
+    DWORD timeout = 1000;
+    // prompt user to choose difficulty level
+    printf("Choose difficulty level (1-3): ");
+    int difficulty;
+    scanf("%d", &difficulty);
+    timeout -= (DWORD)((difficulty - 1) * 200);
+
     int firstSnakeX = rand() % 10;
     int firstSnakeY = rand() % 10;
     int appleX, appleY;
@@ -160,35 +177,48 @@ int main() {
         appleY = rand() % 10;
     } while (appleX == firstSnakeX && appleY == firstSnakeY);
 
-    Snake snake = {malloc(sizeof(int) * 10), malloc(sizeof(int) * 10), 1};
+    Snake* snake = malloc(sizeof(Snake));
+    snake->x = malloc(sizeof(int));
+    snake->y = malloc(sizeof(int));
+    snake->x[0] = firstSnakeX;
+    snake->y[0] = firstSnakeY;
+    snake->length = 1;
     Apple apple = {appleX, appleY};
 
-    snake.x[0] = firstSnakeX;
-    snake.y[0] = firstSnakeY;
-    snake.length = 1;
-
-    render(&snake, apple);
-    char input;
+    render(snake, apple);
+    char input = 'd';  // Initial direction
+    growSnake(snake);
+    render(snake, apple);
+    Sleep(timeout);  // Initial delay before starting the game
     while (1) {
+        if (snake->length == 100) {
+            printf("Congratulations! You reached the maximum length of 100.\n");
+            endGame(snake);
+        }
+
         if (_kbhit()) {
             input = (char)_getch();
         }
-        if (input == 'w') {
-            snake.y[snake.length - 1]--;
-        } else if (input == 's') {
-            snake.y[snake.length - 1]++;
-        } else if (input == 'a') {
-            snake.x[snake.length - 1]--;
-        } else if (input == 'd') {
-            snake.x[snake.length - 1]++;
-        }
-        
-        render(&snake,apple);
-        Sleep(1000);
 
+        moveSnake(snake, input);
+
+        if (snake->x[0] == apple.x && snake->y[0] == apple.y) {
+            growSnake(snake);
+            do {
+                apple.x = rand() % 10;
+                apple.y = rand() % 10;
+            } while (isSnakeBodyThere(snake, apple.x, apple.y));
+        }
+
+        render(snake, apple);
+        Sleep(timeout);  // Slow down the game for better visibility
     }
 
-    free(snake.x);
-    free(snake.y);
+    free(snake->x);
+    free(snake->y);
+    free(snake);
     return 0;
 }
+
+
+
