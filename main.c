@@ -148,7 +148,7 @@ int main() {
     printf("Choose difficulty level (1-3): ");
     int difficulty;
     scanf("%d", &difficulty);
-    timeout -= (DWORD)((difficulty - 1) * 200);
+    timeout -= (DWORD)((difficulty - 1) * 420);
 
     int firstSnakeX = rand() % 10;
     int firstSnakeY = rand() % 10;
